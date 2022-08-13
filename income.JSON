@@ -1,0 +1,16 @@
+{
+   "lastName":"Коваль",
+        "lastName":"Слашин",
+           "productName":"Морозильная камера",
+           "minTimes": 5,
+           "minExpenses": 1000,
+           "maxExpenses": 10000,
+           "productName":"Холодильник",
+           "minTimes": 1,
+           "lastName":"Соколов",
+           "minExpenses": 1000,
+           "maxExpenses": 100000,
+           "badCustomers": 3,
+           "badCustomers": 2
+}
+
