@@ -1,4 +1,4 @@
-package criterias.search;
+package criterias.searchDTOs;
 
 public class LastName {
     private String firstName;

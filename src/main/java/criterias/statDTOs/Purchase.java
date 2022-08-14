@@ -1,13 +1,13 @@
-package criterias.stat;
+package criterias.statDTOs;
 
 public class Purchase {
     private String name;
-    private int expenses;
+    private double expenses;
 
     public Purchase() {
     }
 
-    public Purchase(String name, int expenses) {
+    public Purchase(String name, double expenses) {
         this.name = name;
         this.expenses = expenses;
     }
@@ -20,11 +20,11 @@ public class Purchase {
         this.name = name;
     }
 
-    public int getExpenses() {
+    public double getExpenses() {
         return expenses;
     }
 
-    public void setExpenses(int expenses) {
+    public void setExpenses(double expenses) {
         this.expenses = expenses;
     }
 }

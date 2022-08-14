@@ -1,6 +1,6 @@
 package criterias;
 
-import criterias.stat.Customer;
+import criterias.statDTOs.Customer;
 
 import java.util.List;
 
@@ -9,9 +9,9 @@ public class Stat {
     private int totalDays;
     private List<Customer> customers;
     private int totalExpenses;
-    private int avgExpenses;
+    private double avgExpenses;
 
-    public Stat(String type, int totalDays, List<Customer> customers, int totalExpenses, int avgExpenses) {
+    public Stat(String type, int totalDays, List<Customer> customers, int totalExpenses, double avgExpenses) {
         this.type = type;
         this.totalDays = totalDays;
         this.customers = customers;
@@ -54,11 +54,11 @@ public class Stat {
         this.totalExpenses = totalExpenses;
     }
 
-    public int getAvgExpenses() {
+    public double getAvgExpenses() {
         return avgExpenses;
     }
 
-    public void setAvgExpenses(int avgExpenses) {
+    public void setAvgExpenses(double avgExpenses) {
         this.avgExpenses = avgExpenses;
     }
 }

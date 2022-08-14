@@ -1,6 +1,6 @@
 package criterias;
 
-import criterias.search.Criteria;
+import criterias.searchDTOs.Criteria;
 import java.util.List;
 
 public class Type {

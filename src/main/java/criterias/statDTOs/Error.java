@@ -1,4 +1,4 @@
-package criterias.stat;
+package criterias.statDTOs;
 
 public class Error {
     private String type;

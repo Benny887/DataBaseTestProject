@@ -1,25 +1,25 @@
-package criterias.search;
+package criterias.searchDTOs;
 
 import java.util.List;
 
-public class SecondCriteria implements Criteria{
-    private MinTimesPurchase criteria;
+public class FourthCriteria implements Criteria{
+    private BadCustomer criteria;
 
     private List<LastName> results;
 
-    public SecondCriteria(MinTimesPurchase criteria, List<LastName> results) {
+    public FourthCriteria(BadCustomer criteria, List<LastName> results) {
         this.criteria = criteria;
         this.results = results;
     }
 
-    public SecondCriteria() {
+    public FourthCriteria() {
     }
 
-    public MinTimesPurchase getCriteria() {
+    public BadCustomer getCriteria() {
         return criteria;
     }
 
-    public void setCriteria(MinTimesPurchase criteria) {
+    public void setCriteria(BadCustomer criteria) {
         this.criteria = criteria;
     }
 

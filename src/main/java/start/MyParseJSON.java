@@ -1,16 +1,8 @@
-package start;//import com.fasterxml.jackson.core.JsonParser;
-//import com.fasterxml.jackson.databind.JsonNode;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
-//import com.fasterxml.jackson.databind.util.JSONPObject;
+package start;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import criterias.stat.DateForStat;
-
+import database.SqlOperationsForSearch;
+import database.SqlOperationsForStat;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -31,7 +23,7 @@ public class MyParseJSON {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
             while (br.ready())
                 jsonFileAsString += br.readLine();
-            Pattern pattern = Pattern.compile("[\\p{L}\\s]+\":\\s?\"?([\\p{L}\\s\\d]+)");
+            Pattern pattern = Pattern.compile("([\\p{L}\\s]+)\":[^\\[{]\\s?\"?([-\\p{L}\\s\\d]+)");
             Matcher matcher = pattern.matcher(jsonFileAsString);
             while (matcher.find()) {
                 pointsOfJsons.add(matcher.start());
@@ -57,47 +49,41 @@ public class MyParseJSON {
     }
 
     public static void main(String[] args) throws IOException, SQLException {
-//        SqlSearchOperations operations = new SqlSearchOperations();
+        SqlOperationsForSearch operations = new SqlOperationsForSearch();
        json = customJsonParse(new File("income.JSON"));
        int checkJson = getNumberOfOperation(json.get(0));
        if(checkJson != 0) {
-//           for (int i = 0; i < json.size(); i++) {
-//               int operation = getNumberOfOperation(json.get(i));
-//               String elem = json.get(i);
-//               switch (operation) {
-//                   case 1:
-//                   case 4:
-//                       operations.getSqlDataForSearch(elem.split(":")[1].trim(), null, operation);
-//                       break;
-//                   case 2:
-//                   case 3:
-//                       operations.getSqlDataForSearch(elem.split(":")[1].trim(), getNextElemValue(i).split(":")[1].trim(), operation);
-//                       i++;
-//                       break;
-//                   default:
-//                       System.out.println("Некорректные данные");
-//               }
-//           }
+           for (int i = 0; i < json.size(); i++) {
+               int operation = getNumberOfOperation(json.get(i));
+               String elem = json.get(i);
+               switch (operation) {
+                   case 1:
+                   case 4:
+                       operations.getSqlDataForSearch(elem.split(":")[1].trim(), null, operation);
+                       break;
+                   case 2:
+                   case 3:
+                       operations.getSqlDataForSearch(elem.split(":")[1].trim(), getNextElemValue(i).split(":")[1].trim(), operation);
+                       i++;
+                       break;
+                   default:
+                       System.out.println("Некорректные данные");
+               }
+           }
        } else {
-           GsonBuilder gsonB = new GsonBuilder()
-                   .setPrettyPrinting();
-           Gson gson = gsonB.create();
-           Reader reader = Files.newBufferedReader(Paths.get("income.JSON"));
-           DateForStat dateInterval = gson.fromJson(reader,DateForStat.class);
-           System.out.println(dateInterval);
-           reader.close();
+
+           SqlOperationsForStat sqlStat = new SqlOperationsForStat();
+           java.sql.Date sqlDate1 = java.sql.Date.valueOf(json.get(0).split(":")[1].trim());
+           java.sql.Date sqlDate2 = java.sql.Date.valueOf(json.get(1).split(":")[1].trim());
+           sqlStat.getSqlDataForStat(sqlDate1, sqlDate2);
        }
-//        JsonMaker.writeToJsonFile();
-//        json = customJsonParse(new File("income.JSON"));
+        JsonMaker.writeToJsonFile();
+
     }
 
     private static String getNextElemValue(int i){
         return json.get(i+1);
     }
 
-
 }
-//operations.getSqlDataForSearch(json.get(0).split(":")[1].trim(),null); поиск по фамилии
-//operations.getSqlDataForSearch(json.get(1).split(":")[1].trim(),json.get(2).split(":")[1].trim()); поиск миним
-//operations.getSqlDataForSearch(json.get(3).split(":")[1].trim(),json.get(4).split(":")[1].trim()); min и max покупки
-// operations.getSqlDataForSearch(json.get(5).split(":")[1].trim(),null); пассивн покуп
+

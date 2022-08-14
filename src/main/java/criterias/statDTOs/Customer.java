@@ -1,4 +1,4 @@
-package criterias.stat;
+package criterias.statDTOs;
 
 import java.util.List;
 

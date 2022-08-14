@@ -1,4 +1,4 @@
-package criterias.search;
+package criterias.searchDTOs;
 
 public interface Criteria {
 }

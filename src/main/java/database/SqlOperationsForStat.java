@@ -1,79 +1,134 @@
 package database;
 
-import start.JsonMaker;
-
+import criterias.statDTOs.Customer;
+import criterias.statDTOs.Purchase;
 import java.io.IOException;
 import java.sql.*;
+import java.sql.Date;
+import java.util.*;
 
 
 public class SqlOperationsForStat {
 
-    private static final String daysOutOfHolidays = "select count(*) from purchases\n" +
-            "where acquireDate between '2021-01-11' and '2021-01-17' \n" +
-            "      and dayname(acquireDate) not in ('Sunday','Saturday')";
+    private static List<Customer> customers = new ArrayList<>();
+    private static Map<String,List<Purchase>> uniqueNames = new LinkedHashMap<>();
+    private static int totalDays;
+    private static int allCustomersExpanses;
+    private static double getAvgExpenses;
 
-    private static final String allPurchasesInPeriod = "select p.purchase, sum(pr.price) total\n" +
-            "from purchases p join products pr on p.purchase = pr.prodName\n" +
-            "where customer = 'Вентура' and acquireDate between '2021-01-11' and '2021-01-14' \n" +
-            "group by p.purchase order by total desc";
+    public static List<Customer> getCustomers() {
+        return customers;
+    }
 
-    private static final String totalPriceOfOneCustomer = "select sum(pr.price)\n" +
-            "from purchases p join products pr on p.purchase = pr.prodName\n" +
-            "where customer = 'Фет' and acquireDate between '2021-01-12' and '2021-01-14' ";
+    public static int getTotalDays() {
+        return totalDays;
+    }
 
-    private static final String totalPriceOfAllCustomers = "select sum(pr.price) total\n" +
-            "from purchases p join products pr on p.purchase = pr.prodName\n" +
-            "and acquireDate between '2021-01-12' and '2021-01-14' ";
+    public static int getAllCustomersExpanses() {
+        return allCustomersExpanses;
+    }
 
-    private static final String averageExpensesOfAllCustomers = "select avg(pr.price) total\n" +
-            "from purchases p join products pr on p.purchase = pr.prodName\n" +
-            "and acquireDate between '2021-01-12' and '2021-01-14'";
+    public static double getGetAvgExpenses() {
+        return getAvgExpenses;
+    }
 
-    public void getSqlDataForStat(Date fromDate, Date toDate, String lastName) throws SQLException, IOException {
-
-        PreparedStatement stat;
-        ResultSet result;
-        try (Connection connection = InitialTables.getConnection();
-             ) {
-
-                    stat = connection.prepareStatement("select count(*) from purchases " +
-                            "where acquireDate between ? and ? and dayname(acquireDate) " +
-                            "not in ('Sunday','Saturday')");
-                    stat.setDate(1, fromDate);
-                    stat.setDate(2,toDate);
-                    result = stat.executeQuery();
-                        int s = result.getInt(1);
-
-                    stat = connection.prepareStatement("select p.purchase, sum(pr.price) total " +
-                            "from purchases p join products pr on p.purchase = pr.prodName" +
-                            "where customer = ? and acquireDate between ? and ? " +
-                            "group by p.purchase order by total desc");
-                    stat.setString(1, lastName);
-                    stat.setDate(2, fromDate);
-                    stat.setDate(3, toDate);
-
-                    stat = connection.prepareStatement("select sum(pr.price) from purchases p " +
-                            "join products pr on p.purchase = pr.prodName" +
-                            "where customer = ? and acquireDate between ? and ? ");
-                    stat.setString(1, lastName);
-                    stat.setDate(2, fromDate);
-                    stat.setDate(3, toDate);
-
-                    stat = connection.prepareStatement("select sum(pr.price) total" +
-                            "from purchases p join products pr on p.purchase = pr.prodName" +
-                            "and acquireDate between ? and ? ");
-                    stat.setDate(1, fromDate);
-                    stat.setDate(2, toDate);
-
-                    stat = connection.prepareStatement("select avg(pr.price) total " +
-                            "from purchases p join products pr on p.purchase = pr.prodName" +
-                            "and acquireDate between ? and ?");
-                    stat.setDate(1, fromDate);
-                    stat.setDate(2, toDate);
-            }
-
-
-            stat.close();
+    public void getSqlDataForStat(Date fromDate, Date toDate) throws SQLException, IOException {
+        try (Connection connection = InitialTables.getConnection()){
+            getCustomers(connection,fromDate,toDate);
+            totalDays =  getTotalDays(connection,fromDate,toDate);
+            allCustomersExpanses = getAllCustomersExpanses(connection,fromDate,toDate);
+            getAvgExpenses = getAvgExpenses(connection,fromDate,toDate);
         }
     }
+
+    public void getCustomers(Connection connection, Date fromDate, Date toDate) throws SQLException {
+        String name;
+        Purchase purch;
+        PreparedStatement stat = connection.prepareStatement("select c.firstName, c.lastName, p.purchase, sum(pr.price) total\n" +
+                "from purchases p join products pr on p.purchase = pr.prodName\n" +
+                "join customers c on p.customer = c.lastName\n" +
+                "where acquireDate between ? and ? \n" +
+                "group by c.firstName, c.lastName, p.purchase order by total desc");
+        stat.setDate(1, fromDate);
+        stat.setDate(2, toDate);
+        ResultSet result = stat.executeQuery();
+        while (result.next()) {
+            name = result.getString(2) + " " + result.getString(1);
+            purch = new Purchase(result.getString(3), Double.parseDouble(result.getString(4)));
+            if(uniqueNames.containsKey(name))
+                uniqueNames.get(name).add(purch);
+            else {
+                ArrayList<Purchase> purchases = new ArrayList<>();
+                purchases.add(purch);
+                uniqueNames.put(name,purchases);
+            }
+        }
+        for (Map.Entry<String, List<Purchase>> list : uniqueNames.entrySet()){
+            int total = getOneCustomerExpenses(connection, fromDate, toDate, list.getKey().split(" ")[0]);
+            customers.add(new Customer(list.getKey(), list.getValue(), total));
+        }
+        stat.close();
+    }
+
+    public int getOneCustomerExpenses(Connection connection, Date fromDate, Date toDate, String lastName) throws SQLException {
+        int value=0;
+        PreparedStatement stat = connection.prepareStatement("select sum(pr.price)\n" +
+                "from purchases p\n" +
+                "join products pr on p.purchase = pr.prodName\n" +
+                "where customer = ? \n" +
+                "and acquireDate between ? and ?");
+        stat.setString(1, lastName);
+        stat.setDate(2, fromDate);
+        stat.setDate(3, toDate);
+        ResultSet result = stat.executeQuery();
+        if(result.next())
+            value=result.getInt(1);
+        return value;
+    }
+
+    public int getTotalDays(Connection connection, Date fromDate, Date toDate) throws SQLException {
+        int value=0;
+        PreparedStatement stat=connection.prepareStatement("select count(*) from purchases " +
+                "where acquireDate between ? and ? and dayname(acquireDate) " +
+                "not in ('Sunday','Saturday')");
+        stat.setDate(1, fromDate);
+        stat.setDate(2, toDate);
+        ResultSet result = stat.executeQuery();
+        if(result.next())
+            value=result.getInt(1);
+        stat.close();
+        return value;
+    }
+
+    public int getAllCustomersExpanses(Connection connection, Date fromDate, Date toDate) throws SQLException {
+        int value=0;
+        PreparedStatement stat = connection.prepareStatement("select sum(pr.price) total\n" +
+                "from purchases p\n" +
+                "join products pr on p.purchase = pr.prodName\n" +
+                "and acquireDate between ? and ?");
+        stat.setDate(1, fromDate);
+        stat.setDate(2, toDate);
+        ResultSet result = stat.executeQuery();
+        if(result.next())
+            value=result.getInt(1);
+        stat.close();
+        return value;
+    }
+
+    public double getAvgExpenses(Connection connection, Date fromDate, Date toDate) throws SQLException {
+        int value=0;
+        PreparedStatement stat = connection.prepareStatement("select avg(pr.price) total\n" +
+                "from purchases p\n" +
+                "join products pr on p.purchase = pr.prodName\n" +
+                "and acquireDate between ? and ?");
+        stat.setDate(1, fromDate);
+        stat.setDate(2, toDate);
+        ResultSet result = stat.executeQuery();
+        if(result.next())
+            value=result.getInt(1);
+        stat.close();
+        return value;
+    }
+
+}
 

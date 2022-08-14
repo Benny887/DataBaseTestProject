@@ -1,4 +1,4 @@
-package criterias.search;
+package criterias.searchDTOs;
 
 import java.util.List;
 

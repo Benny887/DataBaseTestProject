@@ -1,6 +1,13 @@
 {
-   "startDate": "2020-01-14",
-   "endDate": "2020-01-26"
+  "criterias": [
+    {"lastName":"Иванов"},
+    {"productName":"Минеральная вода", "minTimes": 5},
+    {"minExpenses": 112, "maxExpenses": 4000},
+    {"badCustomers": 3}
+  ]
 }
+
+
+
 
 

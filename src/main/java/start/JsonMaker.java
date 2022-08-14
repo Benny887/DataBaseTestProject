@@ -2,10 +2,11 @@ package start;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import criterias.Stat;
 import criterias.Type;
-import criterias.search.*;
+import criterias.searchDTOs.*;
 import database.SqlOperationsForSearch;
-
+import database.SqlOperationsForStat;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,67 +51,21 @@ public class JsonMaker {
     }
 
     public static void writeToJsonFile() throws IOException {
+        Type type;
+        Stat stat;
         GsonBuilder gsonB = new GsonBuilder()
                 .setPrettyPrinting();
         Gson gson = gsonB.create();
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("output.json", true)))) {
-            Type type = new Type("search", al);
-            gson.toJson(type, writer);
+            if(al.size() !=0) {
+                type = new Type("search", al);
+                gson.toJson(type, writer);
+            } else {
+                stat = new Stat("stat", SqlOperationsForStat.getTotalDays(),SqlOperationsForStat.getCustomers(),
+                        SqlOperationsForStat.getAllCustomersExpanses(),SqlOperationsForStat.getGetAvgExpenses());
+                gson.toJson(stat, writer);
+            }
         }
     }
 }
-
-//            по имени
-//        try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("output.json", true)))) {
-//            List<LastName> results = new ArrayList<>();
-//            Name nameCriteria = new Name(jsonElem);
-//            for (String str : SqlSearchOperations.chooseCriteriaList(elem)) {
-//                results.add(new LastName(str.split(":")[0], str.split(":")[1]));
-//            }
-//            FirstCriteria firstCriteria = new FirstCriteria(nameCriteria, results);
-//            ArrayList<Criteria> al = new ArrayList<>();
-//            al.add(firstCriteria);
-//            Type type = new Type("search", al);
-//
-//        по мин колич покуп
-//             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("output.json",true)));
-//            List<LastName> results = new ArrayList<>();
-//            MinTimesPurchase nameCriteria = new MinTimesPurchase(firstParam,Integer.parseInt(secondParam));
-//            for(String str : chooseCriteriaList(numOfOperation)){
-//                results.add(new LastName(str.split(":")[0], str.split(":")[1]));
-//            }
-//            SecondCriteria secondCriteria = new SecondCriteria(nameCriteria,results);
-//            List<Criteria> al = new ArrayList<>();
-//            al.add(secondCriteria);
-//            Type type = new Type("search",al);
-
-//           в min max интервал
-//        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("output.json",true)));
-//        List<LastName> results = new ArrayList<>();
-//        MinMaxExpenses nameCriteria = new MinMaxExpenses(Integer.parseInt(firstParam),Integer.parseInt(secondParam));
-//        for(String str : chooseCriteriaList(numOfOperation)){
-//            results.add(new LastName(str.split(":")[0], str.split(":")[1]));
-//        }
-//        ThirdCriteria thirdCriteria = new ThirdCriteria(nameCriteria,results);
-//        List<Criteria> al = new ArrayList<>();
-//        al.add(thirdCriteria);
-//        Type type = new Type("search",al);
-//
-//        пассивный покупатель
-//        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("output.json",true)));
-//        List<LastName> results = new ArrayList<>();
-//        BadCustomer nameCriteria = new BadCustomer(Integer.parseInt(firstParam));
-//        for(String str : chooseCriteriaList(numOfOperation)){
-//            results.add(new LastName(str.split(":")[0], str.split(":")[1]));
-//        }
-//        FourthCriteria fourthCriteria = new FourthCriteria(nameCriteria,results);
-//        List<Criteria> al = new ArrayList<>();
-//        al.add(fourthCriteria);
-//        Type type = new Type("search",al);
-
-
-//                    gson.toJson(type, writer);
-//                    writer.close();
-//
-//        }
 
