@@ -1,7 +1,9 @@
 package database;
 
+import criterias.Error;
 import criterias.statDTOs.Customer;
 import criterias.statDTOs.Purchase;
+import json.JsonWriter;
 import start.IncomeHandler;
 import java.io.IOException;
 import java.sql.*;
@@ -17,7 +19,7 @@ public class SqlOperationsForStat {
     private static int allCustomersExpanses;
     private static double getAvgExpenses;
 
-    public static List<Customer> getCustomers() {
+    public static List<Customer> getAllCustomersPurchases() {
         return customers;
     }
 
@@ -34,28 +36,42 @@ public class SqlOperationsForStat {
     }
 
     public void makePojoForStat() throws SQLException, IOException {
-        java.sql.Date sqlDate1 = java.sql.Date.valueOf(IncomeHandler.getJson().get(0).split(":")[1].trim());
-        java.sql.Date sqlDate2 = java.sql.Date.valueOf(IncomeHandler.getJson().get(1).split(":")[1].trim());
-        getSqlDataForStat(sqlDate1, sqlDate2);
+        try {
+            java.sql.Date sqlDate1 = java.sql.Date.valueOf(IncomeHandler.getJson().get(0).split(":")[1].trim());
+            java.sql.Date sqlDate2 = java.sql.Date.valueOf(IncomeHandler.getJson().get(1).split(":")[1].trim());
+            getSqlDataForStat(sqlDate1, sqlDate2);
+        } catch (IllegalArgumentException e){
+            Error.setCause("Ошибка в значении даты во входящем файле(неверный формат)");
+            JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(),"error");
+            throw new IllegalArgumentException();
+        }
     }
 
     private void getSqlDataForStat(Date fromDate, Date toDate) throws SQLException, IOException {
         try (Connection connection = InitialTables.getConnection()){
-            getCustomers(connection,fromDate,toDate);
+            getAllCustomersPurchases(connection,fromDate,toDate);
             totalDays =  getTotalDays(connection,fromDate,toDate);
             allCustomersExpanses = getAllCustomersExpanses(connection,fromDate,toDate);
             getAvgExpenses = getAvgExpenses(connection,fromDate,toDate);
         }
+//        catch (SQLException sql){
+//            Error.setCause("Ошибка в запрос");
+//            JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(),"error");
+//            throw new IllegalArgumentException();
+//        }
     }
 
-    private void getCustomers(Connection connection, Date fromDate, Date toDate) throws SQLException {
+    private void getAllCustomersPurchases(Connection connection, Date fromDate, Date toDate) throws SQLException {
         String name;
         Purchase purch;
         PreparedStatement stat = connection.prepareStatement("select c.firstName, c.lastName, p.purchase, sum(pr.price) total\n" +
-                "from purchases p join products pr on p.purchase = pr.prodName\n" +
+                "from purchases p\n" +
+                "join products pr on p.purchase = pr.prodName\n" +
                 "join customers c on p.customer = c.lastName\n" +
                 "where acquireDate between ? and ? \n" +
-                "group by c.firstName, c.lastName, p.purchase order by total desc");
+                "      and dayname(acquireDate) not in ('Sunday','Saturday') \n" +
+                "group by c.firstName, c.lastName, p.purchase\n" +
+                "order by total desc");
         stat.setDate(1, fromDate);
         stat.setDate(2, toDate);
         ResultSet result = stat.executeQuery();
@@ -83,7 +99,8 @@ public class SqlOperationsForStat {
                 "from purchases p\n" +
                 "join products pr on p.purchase = pr.prodName\n" +
                 "where customer = ? \n" +
-                "and acquireDate between ? and ?");
+                "and acquireDate between ? and ? \n" +
+                "and dayname(acquireDate) not in ('Sunday','Saturday')");
         stat.setString(1, lastName);
         stat.setDate(2, fromDate);
         stat.setDate(3, toDate);
@@ -113,7 +130,8 @@ public class SqlOperationsForStat {
         PreparedStatement stat = connection.prepareStatement("select sum(pr.price) total\n" +
                 "from purchases p\n" +
                 "join products pr on p.purchase = pr.prodName\n" +
-                "and acquireDate between ? and ?");
+                "and acquireDate between ? and ?\n" +
+                "and dayname(acquireDate) not in ('Sunday','Saturday') ");
         stat.setDate(1, fromDate);
         stat.setDate(2, toDate);
         ResultSet result = stat.executeQuery();
@@ -128,7 +146,8 @@ public class SqlOperationsForStat {
         PreparedStatement stat = connection.prepareStatement("select avg(pr.price) total\n" +
                 "from purchases p\n" +
                 "join products pr on p.purchase = pr.prodName\n" +
-                "and acquireDate between ? and ?");
+                "and acquireDate between ? and ?\n" +
+                "and dayname(acquireDate) not in ('Sunday','Saturday')");
         stat.setDate(1, fromDate);
         stat.setDate(2, toDate);
         ResultSet result = stat.executeQuery();

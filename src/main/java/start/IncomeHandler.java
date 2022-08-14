@@ -1,10 +1,12 @@
 package start;
 
+import criterias.Error;
 import database.SqlOperationsForSearch;
 import database.SqlOperationsForStat;
-import json.JsonMaker;
+import json.JsonWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.List;
@@ -14,20 +16,41 @@ import static json.MyParseJSON.customJsonParse;
 public class IncomeHandler {
 
     private static List<String> json;
+    private static Path writeDst;
+
+    public static Path getWriteDst() {
+        return writeDst;
+    }
 
     public static List<String> getJson() {
         return json;
     }
+
     public void handleIncomeData(String[] args) throws IOException, SQLException {
-        json = customJsonParse(new File(args[1]));
-        if(args[0].equals("search")){
-            SqlOperationsForSearch sqlOperationsForSearch = new SqlOperationsForSearch();
-            sqlOperationsForSearch.searchOperationManager();
-            JsonMaker.writeToJsonFile(Paths.get(args[2]));
-        } else if(args[0].equals("stat")){
-            SqlOperationsForStat sqlOperationsForStat = new SqlOperationsForStat();
-            sqlOperationsForStat.makePojoForStat();
-            JsonMaker.writeToJsonFile(Paths.get(args[2]));
+//        try {
+            if (Paths.get(args[1]).toFile().isFile() && Paths.get(args[2]).toFile().isFile()) {
+                json = customJsonParse(new File(args[1]));
+                writeDst = Paths.get(args[2]);
+                if(json.size() != 0 ) {
+                    if (args[0].equals("search")) {
+                        SqlOperationsForSearch sqlOperationsForSearch = new SqlOperationsForSearch();
+                        sqlOperationsForSearch.searchOperationManager();
+                        JsonWriter.writeToJsonFile(Paths.get(args[2]), "search");
+                    } else if (args[0].equals("stat")) {
+                        SqlOperationsForStat sqlOperationsForStat = new SqlOperationsForStat();
+                        sqlOperationsForStat.makePojoForStat();
+                        JsonWriter.writeToJsonFile(Paths.get(args[2]), "stat");
+                    }
+                } else {
+                    Error.setCause("Входной файл содержит некорректные данные(пуст)");
+                    JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(), "error");
+                }
+            } else {
+                System.out.println("Проверьте введенные пути к файлам для чтения и записи");
+            }
         }
-    }
+//        catch (Exception ignore){
+//            System.out.println("какая-то ошибка в IncomeHandler"); //поправить
+//        }
+//    }
 }

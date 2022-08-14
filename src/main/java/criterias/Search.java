@@ -3,12 +3,12 @@ package criterias;
 import criterias.searchDTOs.Criteria;
 import java.util.List;
 
-public class Type {
+public class Search {
     private String type;
 
     List<Criteria> results;
 
-    public Type(String type, List<Criteria> results) {
+    public Search(String type, List<Criteria> results) {
         this.type = type;
         this.results = results;
     }

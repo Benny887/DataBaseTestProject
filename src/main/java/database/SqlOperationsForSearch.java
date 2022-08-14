@@ -1,7 +1,8 @@
 package database;
 
+import criterias.Error;
 import criterias.searchDTOs.*;
-import json.JsonMaker;
+import json.JsonWriter;
 import start.IncomeHandler;
 
 import java.io.*;
@@ -32,22 +33,30 @@ public class SqlOperationsForSearch {
     }
 
     public void searchOperationManager() throws SQLException, IOException {
-        for (int i = 0; i < IncomeHandler.getJson().size(); i++) {
-            int operation = getNumberOfOperation(IncomeHandler.getJson().get(i));
-            String elem = IncomeHandler.getJson().get(i);
-            switch (operation) {
-                case 1:
-                case 4:
-                    getSqlDataForSearch(elem.split(":")[1].trim(), null, operation);
-                    break;
-                case 2:
-                case 3:
-                    getSqlDataForSearch(elem.split(":")[1].trim(), getNextElemValue(i).split(":")[1].trim(), operation);
-                    i++;
-                    break;
-                default:
-                    System.out.println("Некорректные данные");
+        try {
+            for (int i = 0; i < IncomeHandler.getJson().size(); i++) {
+                int operation = getNumberOfOperation(IncomeHandler.getJson().get(i));
+                String elem = IncomeHandler.getJson().get(i);
+                switch (operation) {
+                    case 1:
+                    case 4:
+                        getSqlDataForSearch(elem.split(":")[1].trim(), null, operation);
+                        break;
+                    case 2:
+                    case 3:
+                        getSqlDataForSearch(elem.split(":")[1].trim(), getNextElemValue(i).split(":")[1].trim(), operation);
+                        i++;
+                        break;
+                    default:
+                        Error.setCause("Неверно указан один из критериев поиска");
+                        JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(), "error");
+                        throw new IllegalArgumentException();
+                }
             }
+        } catch (IllegalArgumentException e){
+            Error.setCause("Ошибка в значении критерия поиска");
+            JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(),"error");
+            throw new IllegalArgumentException();
         }
     }
 
