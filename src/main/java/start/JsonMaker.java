@@ -4,11 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import criterias.Type;
 import criterias.search.*;
-import database.SqlSearchOperations;
+import database.SqlOperationsForSearch;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class JsonMaker {
@@ -21,7 +20,7 @@ public class JsonMaker {
     public static void makeSearchJson(String firstJsonElem, String secondJsonElem, int numOfOperation) {
         List<LastName> results = new ArrayList<>();
         Criteria criteria;
-        List<String> criterias = SqlSearchOperations.chooseCriteriaList(numOfOperation);
+        List<String> criterias = SqlOperationsForSearch.chooseCriteriaList(numOfOperation);
         for (String str : criterias) {
             results.add(new LastName(str.split(":")[0], str.split(":")[1]));
         }

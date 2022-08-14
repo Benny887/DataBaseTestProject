@@ -4,11 +4,13 @@ package start;//import com.fasterxml.jackson.core.JsonParser;
 //import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 //import com.fasterxml.jackson.databind.util.JSONPObject;
 
-import criterias.search.Criteria;
-import criterias.search.FirstCriteria;
-import database.SqlSearchOperations;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import criterias.stat.DateForStat;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -55,67 +57,47 @@ public class MyParseJSON {
     }
 
     public static void main(String[] args) throws IOException, SQLException {
-        SqlSearchOperations operations = new SqlSearchOperations();
+//        SqlSearchOperations operations = new SqlSearchOperations();
        json = customJsonParse(new File("income.JSON"));
-        for (int i = 0; i < json.size(); i++) {
-            int operation = getNumberOfOperation(json.get(i));
-            String elem = json.get(i);
-            switch (operation){
-                case 1:
-                case 4:
-                    operations.getSqlData(elem.split(":")[1].trim(),null,operation);
-                        break;
-                case 2:
-                case 3:
-                    operations.getSqlData(elem.split(":")[1].trim(),getNextElemValue(i).split(":")[1].trim(),operation);
-                        i++;
-                        break;
-                default:
-                    System.out.println("Некорректные данные");
-            }
-        }
-        JsonMaker.writeToJsonFile();
-//        FirstCriteria firstCriteria;
-//        for (Criteria criteria : JsonMaker.getAl()){
-//            if(criteria instanceof FirstCriteria) {
-//                firstCriteria = (FirstCriteria) criteria;
-//
-//            }
-//        }
-//        List<String> data = SqlSearchOperations.getLastName();
-//        System.out.println(data);
-//        for(String s : data){
-//            JsonMaker.makeSearchJson(s.split(":")[0],s.split(":")[1],1);
-//        }
-//
-//        List<String> data1 = SqlSearchOperations.getProductName();
-//        System.out.println(data1);
-//        for(String s : data1){
-//            JsonMaker.makeSearchJson(s.split(":")[0],s.split(":")[1],2);
-//        }
-//
-//        List<String> data2 = SqlSearchOperations.getMinExpenses();
-//        System.out.println(data2);
-//        for(String s : data2){
-//            JsonMaker.makeSearchJson(s.split(":")[0],s.split(":")[1],3);
-//        }
-//
-//        List<String> data3 = SqlSearchOperations.getBadCustomers();
-//        System.out.println(data3);
-//        for(String s : data3){
-//            JsonMaker.makeSearchJson(s.split(":")[0],s.split(":")[1],4);
-//        }
-//        System.out.println(JsonMaker.getAl());
-//
-//
+       int checkJson = getNumberOfOperation(json.get(0));
+       if(checkJson != 0) {
+//           for (int i = 0; i < json.size(); i++) {
+//               int operation = getNumberOfOperation(json.get(i));
+//               String elem = json.get(i);
+//               switch (operation) {
+//                   case 1:
+//                   case 4:
+//                       operations.getSqlDataForSearch(elem.split(":")[1].trim(), null, operation);
+//                       break;
+//                   case 2:
+//                   case 3:
+//                       operations.getSqlDataForSearch(elem.split(":")[1].trim(), getNextElemValue(i).split(":")[1].trim(), operation);
+//                       i++;
+//                       break;
+//                   default:
+//                       System.out.println("Некорректные данные");
+//               }
+//           }
+       } else {
+           GsonBuilder gsonB = new GsonBuilder()
+                   .setPrettyPrinting();
+           Gson gson = gsonB.create();
+           Reader reader = Files.newBufferedReader(Paths.get("income.JSON"));
+           DateForStat dateInterval = gson.fromJson(reader,DateForStat.class);
+           System.out.println(dateInterval);
+           reader.close();
+       }
 //        JsonMaker.writeToJsonFile();
+//        json = customJsonParse(new File("income.JSON"));
     }
 
     private static String getNextElemValue(int i){
         return json.get(i+1);
     }
+
+
 }
-//operations.getSqlData(json.get(0).split(":")[1].trim(),null); поиск по фамилии
-//operations.getSqlData(json.get(1).split(":")[1].trim(),json.get(2).split(":")[1].trim()); поиск миним
-//operations.getSqlData(json.get(3).split(":")[1].trim(),json.get(4).split(":")[1].trim()); min и max покупки
-// operations.getSqlData(json.get(5).split(":")[1].trim(),null); пассивн покуп
+//operations.getSqlDataForSearch(json.get(0).split(":")[1].trim(),null); поиск по фамилии
+//operations.getSqlDataForSearch(json.get(1).split(":")[1].trim(),json.get(2).split(":")[1].trim()); поиск миним
+//operations.getSqlDataForSearch(json.get(3).split(":")[1].trim(),json.get(4).split(":")[1].trim()); min и max покупки
+// operations.getSqlDataForSearch(json.get(5).split(":")[1].trim(),null); пассивн покуп

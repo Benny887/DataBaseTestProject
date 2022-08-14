@@ -16,19 +16,19 @@ public class InitialTables {
     public static void makeTable() throws SQLException, IOException {
         try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
             statement.executeUpdate("create table customers(\n" +
-                    "firstName varchar(15) not null check (name <> ''),\n" +
-                    "lastName varchar(20) not null check (surname <> '')  primary key\n" +
+                    "firstName varchar(15) not null check (firstName <> ''),\n" +
+                    "lastName varchar(20) not null check (lastName <> '')  primary key\n" +
                     ")");
             statement.executeUpdate("create table products(\n" +
-                    "prodName varchar(30) unique not null check(name <> '') primary key,\n" +
+                    "prodName varchar(30) unique not null check(prodName <> '') primary key,\n" +
                     "price decimal(10,2) not null check (price >= 0)  \n" +
                     ")");
             statement.executeUpdate("create table purchases (\n" +
                     "customer varchar(20) not null check(customer <> ''),\n" +
                     "purchase varchar(30) not null check(purchase <> ''),\n" +
                     "acquireDate date not null,\n" +
-                    "foreign key (purchase) references products(name),\n" +
-                    "foreign key (customer) references customers(surname)\n" +
+                    "foreign key (purchase) references products(prodName),\n" +
+                    "foreign key (customer) references customers(lastName)\n" +
                     ")");
             try (ResultSet resultSet = statement.executeQuery("select * from customers")) {
                 if (resultSet.next()) {
@@ -36,6 +36,10 @@ public class InitialTables {
                 }
             }
         }
+    }
+
+    public static void main(String[] args) throws SQLException, IOException {
+        makeTable();
     }
 
     static Connection getConnection() throws SQLException, IOException {

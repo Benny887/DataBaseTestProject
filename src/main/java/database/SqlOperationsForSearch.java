@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SqlSearchOperations {
+public class SqlOperationsForSearch {
     private static List<String> lastName = new ArrayList<>();
     private static List<String> productName = new ArrayList<>();
     private static List<String> minExpenses = new ArrayList<>();
@@ -30,7 +30,7 @@ public class SqlSearchOperations {
         return badCustomers;
     }
 
-    public void getSqlData(String firstParam, String secondParam, int numOfOperation) throws SQLException, IOException {
+    public void getSqlDataForSearch(String firstParam, String secondParam, int numOfOperation) throws SQLException, IOException {
 
         PreparedStatement stat = null;
         try (Connection connection = InitialTables.getConnection()) {
