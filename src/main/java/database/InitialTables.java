@@ -38,10 +38,6 @@ public class InitialTables {
         }
     }
 
-    public static void main(String[] args) throws SQLException, IOException {
-        makeTable();
-    }
-
     static Connection getConnection() throws SQLException, IOException {
         Properties props = new Properties();
         try (InputStream is = Files.newInputStream(

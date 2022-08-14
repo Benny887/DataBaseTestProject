@@ -1,6 +1,8 @@
 package database;
 
-import start.JsonMaker;
+import criterias.searchDTOs.*;
+import json.JsonMaker;
+import start.IncomeHandler;
 
 import java.io.*;
 import java.sql.*;
@@ -13,25 +15,47 @@ public class SqlOperationsForSearch {
     private static List<String> productName = new ArrayList<>();
     private static List<String> minExpenses = new ArrayList<>();
     private static List<String> badCustomers = new ArrayList<>();
+    private static ArrayList<Criteria> al = new ArrayList<>();
 
-    public static List<String> getLastName() {
-        return lastName;
+    public static ArrayList<Criteria> getAl() {
+        return al;
     }
 
-    public static List<String> getProductName() {
-        return productName;
+    private static int getNumberOfOperation(String json){
+        switch (json.split(":")[0].trim()){
+            case "lastName": return 1;
+            case "productName": return 2;
+            case "minExpenses": return 3;
+            case "badCustomers": return 4;
+            default: return 0;
+        }
     }
 
-    public static List<String> getMinExpenses() {
-        return minExpenses;
+    public void searchOperationManager() throws SQLException, IOException {
+        for (int i = 0; i < IncomeHandler.getJson().size(); i++) {
+            int operation = getNumberOfOperation(IncomeHandler.getJson().get(i));
+            String elem = IncomeHandler.getJson().get(i);
+            switch (operation) {
+                case 1:
+                case 4:
+                    getSqlDataForSearch(elem.split(":")[1].trim(), null, operation);
+                    break;
+                case 2:
+                case 3:
+                    getSqlDataForSearch(elem.split(":")[1].trim(), getNextElemValue(i).split(":")[1].trim(), operation);
+                    i++;
+                    break;
+                default:
+                    System.out.println("Некорректные данные");
+            }
+        }
     }
 
-    public static List<String> getBadCustomers() {
-        return badCustomers;
+    private static String getNextElemValue(int i){
+        return IncomeHandler.getJson().get(i+1);
     }
 
-    public void getSqlDataForSearch(String firstParam, String secondParam, int numOfOperation) throws SQLException, IOException {
-
+    private void getSqlDataForSearch(String firstParam, String secondParam, int numOfOperation) throws SQLException, IOException {
         PreparedStatement stat = null;
         try (Connection connection = InitialTables.getConnection()) {
             switch (numOfOperation) {
@@ -70,8 +94,40 @@ public class SqlOperationsForSearch {
             while (result.next()) {
                 chooseCriteriaList(numOfOperation).add(result.getString(1) + ":" + result.getString(2));
             }
-            JsonMaker.makeSearchJson(firstParam,secondParam,numOfOperation);
+            makePojoForSearch(firstParam,secondParam,numOfOperation);
             stat.close();
+        }
+    }
+
+    public static void makePojoForSearch(String firstJsonElem, String secondJsonElem, int numOfOperation) {
+        List<LastName> results = new ArrayList<>();
+        Criteria criteria;
+        List<String> criterias = SqlOperationsForSearch.chooseCriteriaList(numOfOperation);
+        for (String str : criterias) {
+            results.add(new LastName(str.split(":")[0], str.split(":")[1]));
+        }
+        criterias.clear();
+        switch (numOfOperation) {
+            case 1:
+                Name nameCriteria = new Name(firstJsonElem);
+                criteria = new FirstCriteria(nameCriteria, results);
+                al.add(criteria);
+                break;
+            case 2:
+                MinTimesPurchase nameCriteria1 = new MinTimesPurchase(firstJsonElem, Integer.parseInt(secondJsonElem));
+                criteria = new SecondCriteria(nameCriteria1, results);
+                al.add(criteria);
+                break;
+            case 3:
+                MinMaxExpenses nameCriteria3 = new MinMaxExpenses(Integer.parseInt(firstJsonElem), Integer.parseInt(secondJsonElem));
+                criteria = new ThirdCriteria(nameCriteria3, results);
+                al.add(criteria);
+                break;
+            case 4:
+                BadCustomer nameCriteria4 = new BadCustomer(Integer.parseInt(firstJsonElem));
+                criteria = new FourthCriteria(nameCriteria4, results);
+                al.add(criteria);
+                break;
         }
     }
 

@@ -2,6 +2,7 @@ package database;
 
 import criterias.statDTOs.Customer;
 import criterias.statDTOs.Purchase;
+import start.IncomeHandler;
 import java.io.IOException;
 import java.sql.*;
 import java.sql.Date;
@@ -32,7 +33,13 @@ public class SqlOperationsForStat {
         return getAvgExpenses;
     }
 
-    public void getSqlDataForStat(Date fromDate, Date toDate) throws SQLException, IOException {
+    public void makePojoForStat() throws SQLException, IOException {
+        java.sql.Date sqlDate1 = java.sql.Date.valueOf(IncomeHandler.getJson().get(0).split(":")[1].trim());
+        java.sql.Date sqlDate2 = java.sql.Date.valueOf(IncomeHandler.getJson().get(1).split(":")[1].trim());
+        getSqlDataForStat(sqlDate1, sqlDate2);
+    }
+
+    private void getSqlDataForStat(Date fromDate, Date toDate) throws SQLException, IOException {
         try (Connection connection = InitialTables.getConnection()){
             getCustomers(connection,fromDate,toDate);
             totalDays =  getTotalDays(connection,fromDate,toDate);
@@ -41,7 +48,7 @@ public class SqlOperationsForStat {
         }
     }
 
-    public void getCustomers(Connection connection, Date fromDate, Date toDate) throws SQLException {
+    private void getCustomers(Connection connection, Date fromDate, Date toDate) throws SQLException {
         String name;
         Purchase purch;
         PreparedStatement stat = connection.prepareStatement("select c.firstName, c.lastName, p.purchase, sum(pr.price) total\n" +
@@ -70,7 +77,7 @@ public class SqlOperationsForStat {
         stat.close();
     }
 
-    public int getOneCustomerExpenses(Connection connection, Date fromDate, Date toDate, String lastName) throws SQLException {
+    private int getOneCustomerExpenses(Connection connection, Date fromDate, Date toDate, String lastName) throws SQLException {
         int value=0;
         PreparedStatement stat = connection.prepareStatement("select sum(pr.price)\n" +
                 "from purchases p\n" +
@@ -83,10 +90,11 @@ public class SqlOperationsForStat {
         ResultSet result = stat.executeQuery();
         if(result.next())
             value=result.getInt(1);
+        stat.close();
         return value;
     }
 
-    public int getTotalDays(Connection connection, Date fromDate, Date toDate) throws SQLException {
+    private int getTotalDays(Connection connection, Date fromDate, Date toDate) throws SQLException {
         int value=0;
         PreparedStatement stat=connection.prepareStatement("select count(*) from purchases " +
                 "where acquireDate between ? and ? and dayname(acquireDate) " +
@@ -100,7 +108,7 @@ public class SqlOperationsForStat {
         return value;
     }
 
-    public int getAllCustomersExpanses(Connection connection, Date fromDate, Date toDate) throws SQLException {
+    private int getAllCustomersExpanses(Connection connection, Date fromDate, Date toDate) throws SQLException {
         int value=0;
         PreparedStatement stat = connection.prepareStatement("select sum(pr.price) total\n" +
                 "from purchases p\n" +
@@ -115,7 +123,7 @@ public class SqlOperationsForStat {
         return value;
     }
 
-    public double getAvgExpenses(Connection connection, Date fromDate, Date toDate) throws SQLException {
+    private double getAvgExpenses(Connection connection, Date fromDate, Date toDate) throws SQLException {
         int value=0;
         PreparedStatement stat = connection.prepareStatement("select avg(pr.price) total\n" +
                 "from purchases p\n" +
