@@ -9,5 +9,5 @@ public class Main {
 //        InitialTables.makeTable();
         IncomeHandler incomeHandler = new IncomeHandler();
         incomeHandler.handleIncomeData(args);
-    }
+          }
 }

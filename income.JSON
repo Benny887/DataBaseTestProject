@@ -1,7 +1,14 @@
 {
-  "startDate": "2021-01-11",
-  "endDate": "2021-01-17"
+  "criterias": [
+    {"lastName":"Вентура"},
+    {"lastName":"Борн"},
+    {"productName":"Электроплита", "minTimes": 1},
+    {"lastName":"Фет"},
+    {"minExpenses": 1000, "maxExpenses": 30000},
+    {"badCustomers": 3}
+  ]
 }
+
 
 
 

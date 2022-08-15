@@ -50,7 +50,7 @@ public class SqlOperationsForStat {
     private void getSqlDataForStat(Date fromDate, Date toDate) throws SQLException, IOException {
         try (Connection connection = InitialTables.getConnection()){
             getAllCustomersPurchases(connection,fromDate,toDate);
-            totalDays =  getTotalDays(connection,fromDate,toDate);
+            totalDays = getDaysWithoutHolidays(connection,fromDate,toDate);
             allCustomersExpanses = getAllCustomersExpanses(connection,fromDate,toDate);
             getAvgExpenses = getAvgExpenses(connection,fromDate,toDate);
         }
@@ -111,17 +111,26 @@ public class SqlOperationsForStat {
         return value;
     }
 
-    private int getTotalDays(Connection connection, Date fromDate, Date toDate) throws SQLException {
-        int value=0;
-        PreparedStatement stat=connection.prepareStatement("select count(*) from purchases " +
-                "where acquireDate between ? and ? and dayname(acquireDate) " +
-                "not in ('Sunday','Saturday')");
-        stat.setDate(1, fromDate);
-        stat.setDate(2, toDate);
-        ResultSet result = stat.executeQuery();
-        if(result.next())
-            value=result.getInt(1);
-        stat.close();
+    public int getDaysWithoutHolidays (Connection connection, Date fromDate, Date toDate) throws SQLException {
+        int value = 0;
+        String drop = "drop function if exists exclude_holidays";
+        String func ="create function exclude_holidays(date1 DATE, date2 DATE)\n" +
+                "returns int deterministic\n" +
+                "return abs(datediff(date2, date1)) + 1 - abs(datediff(adddate(date2, interval 1 - dayofweek(date2) day),\n" +
+                "                    adddate(date1, interval 1 - dayofweek(date1) day))) / 7 * 2 - (dayofweek(if(date1 > date2, date1, date2)) = 6) - \n" +
+                "                    (dayofweek(if(date1 < date2, date1, date2)) = 7);";
+        Statement stat = connection.createStatement();
+        stat.execute(drop);
+        stat.execute(func);
+        CallableStatement call = connection.prepareCall("{? = call exclude_holidays(?, ?)}");
+        call.registerOutParameter(1,Types.INTEGER);
+        call.setDate(2, fromDate);
+        call.setDate(3, toDate);
+        call.execute();
+        ResultSet result= call.executeQuery();
+        if (result.next())
+            value = result.getInt(1);
+        call.close();
         return value;
     }
 

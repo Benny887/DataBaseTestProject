@@ -38,7 +38,7 @@ public class InitialTables {
         }
     }
 
-    static Connection getConnection() throws SQLException, IOException {
+    public static Connection getConnection() throws SQLException, IOException {
         Properties props = new Properties();
         try (InputStream is = Files.newInputStream(
                 Paths.get(String.valueOf(connAttr)))) {
@@ -52,6 +52,5 @@ public class InitialTables {
         String password = props.getProperty("jdbc.password");
         return DriverManager.getConnection(url, username, password);
     }
-
 
 }
