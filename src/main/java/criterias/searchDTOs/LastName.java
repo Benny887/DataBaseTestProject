@@ -1,8 +1,8 @@
 package criterias.searchDTOs;
 
 public class LastName {
-    private String firstName;
     private String lastName;
+    private String firstName;
 
     public LastName() {
     }

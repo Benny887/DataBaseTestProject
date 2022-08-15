@@ -12,14 +12,14 @@ import java.util.List;
 
 
 public class SqlOperationsForSearch {
-    private static List<String> lastName = new ArrayList<>();
-    private static List<String> productName = new ArrayList<>();
-    private static List<String> minExpenses = new ArrayList<>();
-    private static List<String> badCustomers = new ArrayList<>();
-    private static ArrayList<Criteria> al = new ArrayList<>();
+    private static final List<String> lastName = new ArrayList<>();
+    private static final List<String> productName = new ArrayList<>();
+    private static final List<String> minExpenses = new ArrayList<>();
+    private static final List<String> badCustomers = new ArrayList<>();
+    private static final ArrayList<Criteria> dataForJsonFile = new ArrayList<>();
 
-    public static ArrayList<Criteria> getAl() {
-        return al;
+    public static ArrayList<Criteria> getDataForJsonFile() {
+        return dataForJsonFile;
     }
 
     private static int getNumberOfOperation(String json){
@@ -120,22 +120,22 @@ public class SqlOperationsForSearch {
             case 1:
                 Name nameCriteria = new Name(firstJsonElem);
                 criteria = new FirstCriteria(nameCriteria, results);
-                al.add(criteria);
+                dataForJsonFile.add(criteria);
                 break;
             case 2:
                 MinTimesPurchase nameCriteria1 = new MinTimesPurchase(firstJsonElem, Integer.parseInt(secondJsonElem));
                 criteria = new SecondCriteria(nameCriteria1, results);
-                al.add(criteria);
+                dataForJsonFile.add(criteria);
                 break;
             case 3:
                 MinMaxExpenses nameCriteria3 = new MinMaxExpenses(Integer.parseInt(firstJsonElem), Integer.parseInt(secondJsonElem));
                 criteria = new ThirdCriteria(nameCriteria3, results);
-                al.add(criteria);
+                dataForJsonFile.add(criteria);
                 break;
             case 4:
                 BadCustomer nameCriteria4 = new BadCustomer(Integer.parseInt(firstJsonElem));
                 criteria = new FourthCriteria(nameCriteria4, results);
-                al.add(criteria);
+                dataForJsonFile.add(criteria);
                 break;
         }
     }

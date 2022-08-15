@@ -18,7 +18,7 @@ public class JsonWriter {
         Gson gson = gsonB.create();
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(String.valueOf(path), true)))) {
             if(dataToWrite.equals("search")) {
-                Search type = new Search("search", SqlOperationsForSearch.getAl());
+                Search type = new Search("search", SqlOperationsForSearch.getDataForJsonFile());
                 gson.toJson(type, writer);
             } else if (dataToWrite.equals("stat")){
                 Stat stat = new Stat("stat", SqlOperationsForStat.getTotalDays(),SqlOperationsForStat.getAllCustomersPurchases(),

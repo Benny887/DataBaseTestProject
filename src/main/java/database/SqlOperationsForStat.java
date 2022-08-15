@@ -68,8 +68,8 @@ public class SqlOperationsForStat {
                 "from purchases p\n" +
                 "join products pr on p.purchase = pr.prodName\n" +
                 "join customers c on p.customer = c.lastName\n" +
-                "where acquireDate between ? and ? \n" +
-                "      and dayname(acquireDate) not in ('Sunday','Saturday') \n" +
+                "where acquireDate between ? and ?\n" +
+                "      and extract(dow from acquireDate) not in (0,6) \n" +
                 "group by c.firstName, c.lastName, p.purchase\n" +
                 "order by total desc");
         stat.setDate(1, fromDate);
@@ -100,7 +100,7 @@ public class SqlOperationsForStat {
                 "join products pr on p.purchase = pr.prodName\n" +
                 "where customer = ? \n" +
                 "and acquireDate between ? and ? \n" +
-                "and dayname(acquireDate) not in ('Sunday','Saturday')");
+                "and extract(dow from acquireDate) not in (0,6)");
         stat.setString(1, lastName);
         stat.setDate(2, fromDate);
         stat.setDate(3, toDate);
@@ -111,26 +111,18 @@ public class SqlOperationsForStat {
         return value;
     }
 
-    public int getDaysWithoutHolidays (Connection connection, Date fromDate, Date toDate) throws SQLException {
+    public static int getDaysWithoutHolidays (Connection connection, Date fromDate, Date toDate) throws SQLException {
         int value = 0;
-        String drop = "drop function if exists exclude_holidays";
-        String func ="create function exclude_holidays(date1 DATE, date2 DATE)\n" +
-                "returns int deterministic\n" +
-                "return abs(datediff(date2, date1)) + 1 - abs(datediff(adddate(date2, interval 1 - dayofweek(date2) day),\n" +
-                "                    adddate(date1, interval 1 - dayofweek(date1) day))) / 7 * 2 - (dayofweek(if(date1 > date2, date1, date2)) = 6) - \n" +
-                "                    (dayofweek(if(date1 < date2, date1, date2)) = 7);";
-        Statement stat = connection.createStatement();
-        stat.execute(drop);
-        stat.execute(func);
-        CallableStatement call = connection.prepareCall("{? = call exclude_holidays(?, ?)}");
-        call.registerOutParameter(1,Types.INTEGER);
-        call.setDate(2, fromDate);
-        call.setDate(3, toDate);
-        call.execute();
-        ResultSet result= call.executeQuery();
+        PreparedStatement stat = connection.prepareStatement("select count(*) " +
+                "from (select EXTRACT(DOW FROM s.d::date) as dd " +
+                "from generate_series(?::DATE, ?::DATE , '1 day') " +
+                "AS s(d)) t where dd not in(0,6)");
+        stat.setDate(1, fromDate);
+        stat.setDate(2, toDate);
+        ResultSet result= stat.executeQuery();
         if (result.next())
             value = result.getInt(1);
-        call.close();
+        stat.close();
         return value;
     }
 
@@ -140,7 +132,7 @@ public class SqlOperationsForStat {
                 "from purchases p\n" +
                 "join products pr on p.purchase = pr.prodName\n" +
                 "and acquireDate between ? and ?\n" +
-                "and dayname(acquireDate) not in ('Sunday','Saturday') ");
+                "and extract(dow from acquireDate) not in (0,6)");
         stat.setDate(1, fromDate);
         stat.setDate(2, toDate);
         ResultSet result = stat.executeQuery();
@@ -155,8 +147,8 @@ public class SqlOperationsForStat {
         PreparedStatement stat = connection.prepareStatement("select avg(pr.price) total\n" +
                 "from purchases p\n" +
                 "join products pr on p.purchase = pr.prodName\n" +
-                "and acquireDate between ? and ?\n" +
-                "and dayname(acquireDate) not in ('Sunday','Saturday')");
+                "where acquireDate between ? and ?\n" +
+                "and extract(dow from acquireDate) not in (0,6)");
         stat.setDate(1, fromDate);
         stat.setDate(2, toDate);
         ResultSet result = stat.executeQuery();

@@ -1,5 +1,9 @@
 package database;
 
+import criterias.Error;
+import json.JsonWriter;
+import start.IncomeHandler;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Properties;
+import java.util.Scanner;
 
 public class InitialTables {
     private static final String separator = File.separator;
@@ -14,7 +19,8 @@ public class InitialTables {
             separator + "src" + separator + "main" + separator + "resources" + separator + "db.properties");
 
     public static void makeTable() throws SQLException, IOException {
-        try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
+        try (Connection connection = getConnection(); Statement statement = connection.createStatement();
+             Scanner scanner = new Scanner(System.in)) {
             statement.executeUpdate("create table customers(\n" +
                     "firstName varchar(15) not null check (firstName <> ''),\n" +
                     "lastName varchar(20) not null check (lastName <> '')  primary key\n" +
@@ -30,27 +36,32 @@ public class InitialTables {
                     "foreign key (purchase) references products(prodName),\n" +
                     "foreign key (customer) references customers(lastName)\n" +
                     ")");
-            try (ResultSet resultSet = statement.executeQuery("select * from customers")) {
-                if (resultSet.next()) {
-                    System.out.println(resultSet.getString(1));
-                }
-            }
+            System.out.println("Пожалуйста заполните базу данных из дампа и нажимте Enter по готовности");
+            scanner.nextLine();
+        } catch (Exception ignore){
+            System.out.println("Косяк при создании таблиц");
         }
     }
 
     public static Connection getConnection() throws SQLException, IOException {
         Properties props = new Properties();
+        Connection connection;
         try (InputStream is = Files.newInputStream(
                 Paths.get(String.valueOf(connAttr)))) {
             props.load(is);
+            String drivers = props.getProperty("jdbc.drivers");
+            if (drivers != null)
+                System.setProperty("jdbc.drivers", drivers);
+            String url = props.getProperty("jdbc.url");
+            String username = props.getProperty("jdbc.username");
+            String password = props.getProperty("jdbc.password");
+            connection = DriverManager. getConnection(url, username, password);
+        } catch (Exception e){
+            Error.setCause("Некорректные параметры соединения с базой данных.Проверьте правильность параметров файла кофигурации.");
+            JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(),"error");
+            throw new SQLSyntaxErrorException();
         }
-        String drivers = props.getProperty("jdbc.drivers");
-        if (drivers != null)
-            System.setProperty("jdbc.drivers", drivers);
-        String url = props.getProperty("jdbc.url");
-        String username = props.getProperty("jdbc.username");
-        String password = props.getProperty("jdbc.password");
-        return DriverManager.getConnection(url, username, password);
+        return connection;
     }
 
 }

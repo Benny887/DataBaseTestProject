@@ -1,14 +1,16 @@
 {
-        "criterias": [
-        {"lastName":"Вентура"},
-        {"lastName":"Борн"},
-        {"productName":"Электроплита", "minTimes": 1},
-        {"lastName":"Фет"},
-        {"minExpenses": 1000, "maxExpenses": 30000},
-        {"badCustomers": 3}
-        ]
-        }
-
+        "lastName" : "Вентура",
+        "productName": "Морозильная камера",
+        "minTimes": 5,
+        "productName": "Холодильник",
+        "minTimes": 1,
+        "lastName" : "Соколов",
+        "minExpenses": 1000,
+        "maxExpenses": 28000,
+        "lastName" : "Борн",
+        "badCustomers": 3,
+        "badCustomers": 2
+}
 
 
 
