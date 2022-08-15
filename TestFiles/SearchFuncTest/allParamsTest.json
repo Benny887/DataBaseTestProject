@@ -1,0 +1,15 @@
+{
+  "criterias": [
+    {"minExpenses": 4500, "maxExpenses": 16500},
+    {"lastName":"Фет"},
+    {"productName":"Электроплита", "minTimes": 2},
+    {"lastName":"Борн"},
+    {"lastName":"Чубриков"},
+    {"minExpenses": 6000, "maxExpenses": 18000},
+    {"badCustomers": 1},
+    {"lastName":"Степанов"},
+    {"productName":"Пылесос", "minTimes": 1},
+    {"minExpenses": 33000, "maxExpenses": 46000},
+    {"productName":"Чайник", "minTimes": 3}
+  ]
+}

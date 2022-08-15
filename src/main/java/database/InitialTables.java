@@ -3,6 +3,7 @@ package database;
 import criterias.Error;
 import json.JsonWriter;
 import start.IncomeHandler;
+import support.ErrorMessage;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,8 +57,8 @@ public class InitialTables {
             String password = props.getProperty("jdbc.password");
             connection = DriverManager.getConnection(url, username, password);
         } catch (Exception e) {
-            Error.setCause("Некорректные параметры соединения с базой данных.Проверьте правильность параметров файла кофигурации.");
-            JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(), "error");
+            Error.setCause(ErrorMessage.INCORRECT_DATABASE_CONNECTION);
+            JsonWriter.writeToJsonFile(IncomeHandler.getWriteDstFile(), "error");
             throw new SQLSyntaxErrorException();
         }
         return connection;

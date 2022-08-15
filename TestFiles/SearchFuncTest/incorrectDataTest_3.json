@@ -1,0 +1,8 @@
+{
+  "criterias": [
+    {"lastName":"Веллер"},
+    {"productName":"Калькулятор", "minTimes": 1},
+    {"minExpenses": 70000, "maxExpenses": 80f00},
+    {"badCustomers": 5}
+  ]
+}

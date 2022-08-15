@@ -4,6 +4,7 @@ import criterias.Error;
 import database.SqlOperationsForSearch;
 import database.SqlOperationsForStat;
 import json.JsonWriter;
+import support.ErrorMessage;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -15,10 +16,10 @@ import static json.MyParseJSON.customJsonParse;
 public class IncomeHandler {
 
     private static List<String> json;
-    private static Path writeDst;
+    private static Path writeDstFile;
 
-    public static Path getWriteDst() {
-        return writeDst;
+    public static Path getWriteDstFile() {
+        return writeDstFile;
     }
 
     public static List<String> getJson() {
@@ -29,7 +30,7 @@ public class IncomeHandler {
         try {
             if (checkInnerParam(args[0], args[1], args[2])) {
                 json = customJsonParse(new File(args[1]));
-                writeDst = Paths.get(args[2]);
+                writeDstFile = Paths.get(args[2]);
                 if (json.size() != 0) {
                     if (args[0].equals("search")) {
                         SqlOperationsForSearch sqlOperationsForSearch = new SqlOperationsForSearch();
@@ -41,15 +42,16 @@ public class IncomeHandler {
                         JsonWriter.writeToJsonFile(Paths.get(args[2]), "stat");
                     }
                 } else {
-                    Error.setCause("Входной файл содержит некорректные данные(пуст)");
-                    JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(), "error");
+                    Error.setCause(ErrorMessage.INCORRECT_INPUT_FILES);
+                    JsonWriter.writeToJsonFile(IncomeHandler.getWriteDstFile(), "error");
                 }
             } else {
-                System.out.println("Проверьте корректность входных параметров:названия файлов и тип операции");
+                Error.setCause(ErrorMessage.INCORRECT_INPUT_PARAMS);
+                JsonWriter.writeToJsonFile(IncomeHandler.getWriteDstFile(), "error");
             }
         } catch (Exception ignore) {
-            System.out.println("Произошла ошибка,приложение заканчивает работу");
         }
+
     }
 
     private boolean checkInnerParam(String firstParam, String secondParam, String thirdParam) {

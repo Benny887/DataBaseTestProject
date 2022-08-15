@@ -22,7 +22,7 @@ public class JsonWriter {
                 Search type = new Search("search", SqlOperationsForSearch.getDataForJsonFile());
                 gson.toJson(type, writer);
             } else if (dataToWrite.equals("stat")) {
-                Stat stat = new Stat("stat", SqlOperationsForStat.getTotalDays(), SqlOperationsForStat.getAllCustomersPurchases(),
+                Stat stat = new Stat("stat", SqlOperationsForStat.getTotalDays(), SqlOperationsForStat.getAllCustomersInfo(),
                         SqlOperationsForStat.getAllCustomersExpanses(), SqlOperationsForStat.getGetAvgExpenses());
                 gson.toJson(stat, writer);
             } else {

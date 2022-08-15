@@ -1,0 +1,8 @@
+{
+  "criterias": [
+    {"lastNa5e":"Нурмагомедов"},
+    {"productName":"Калькулятор", "minTimes": 1},
+    {"minExpenses": 40000, "maxExpenses": 60000},
+    {"badCustomers": 1}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "criterias": [
+    {"lastName":"Бэггинс"},
+    {"productName":"Калькулятор", "minTimes": w},
+    {"minExpenses": 70000, "maxExpenses": 80000},
+    {"badCustomers": 5}
+  ]
+}

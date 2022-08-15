@@ -4,6 +4,7 @@ import criterias.Error;
 import criterias.searchDTOs.*;
 import json.JsonWriter;
 import start.IncomeHandler;
+import support.ErrorMessage;
 
 import java.io.*;
 import java.sql.*;
@@ -17,9 +18,11 @@ public class SqlOperationsForSearch {
     private static final List<String> minExpenses = new ArrayList<>();
     private static final List<String> badCustomers = new ArrayList<>();
     private static final ArrayList<Criteria> dataForJsonFile = new ArrayList<>();
+
     public static ArrayList<Criteria> getDataForJsonFile() {
         return dataForJsonFile;
     }
+
     private static PreparedStatement stat = null;
     private static ResultSet result;
 
@@ -38,7 +41,7 @@ public class SqlOperationsForSearch {
         }
     }
 
-    public void searchOperationManager() throws SQLException, IOException {
+    public void searchOperationManager() throws IOException {
         try {
             for (int i = 0; i < IncomeHandler.getJson().size(); i++) {
                 int operation = getNumberOfOperation(IncomeHandler.getJson().get(i));
@@ -54,15 +57,13 @@ public class SqlOperationsForSearch {
                         i++;
                         break;
                     default:
-                        Error.setCause("Неверно указан один из критериев поиска");
-                        JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(), "error");
-                        throw new IllegalArgumentException();
+                        Error.setCause(ErrorMessage.BAD_CRITERIA);
+                        JsonWriter.writeToJsonFile(IncomeHandler.getWriteDstFile(), "error");
                 }
             }
-        } catch (IllegalArgumentException e) {
-            Error.setCause("Ошибка в значении критерия поиска");
-            JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(), "error");
-            throw new IllegalArgumentException();
+        } catch (Exception e) {
+            Error.setCause(ErrorMessage.BAD_QUERY);
+            JsonWriter.writeToJsonFile(IncomeHandler.getWriteDstFile(), "error");
         }
     }
 
@@ -97,6 +98,9 @@ public class SqlOperationsForSearch {
                 chooseCriteriaList(numOfOperation).add(result.getString(1) + ":" + result.getString(2));
             }
             makePojoForSearch(firstParam, secondParam, numOfOperation);
+        } catch (NumberFormatException e) {
+            Error.setCause(ErrorMessage.BAD_CRITERIA);
+            JsonWriter.writeToJsonFile(IncomeHandler.getWriteDstFile(), "error");
             stat.close();
         }
     }

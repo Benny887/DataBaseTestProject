@@ -1,0 +1,7 @@
+{
+  "criterias": [
+    {"productName":"Перфоратор", "minTimes": 1},
+    {"productName":"Посудомоечная машина", "minTimes": 2},
+    {"productName":"Морозильная камера", "minTimes": 5}
+  ]
+}
