@@ -19,6 +19,7 @@ public class SqlOperationsForStat {
     private static int totalDays;
     private static int allCustomersExpanses;
     private static double getAvgExpenses;
+    private static PreparedStatement stat = null;
 
     public static List<Customer> getAllCustomersPurchases() {
         return customers;
@@ -51,13 +52,12 @@ public class SqlOperationsForStat {
     private void getSqlDataForStat(Date fromDate, Date toDate) throws IOException {
         try (Connection connection = InitialTables.getConnection()) {
             getAllCustomersPurchases(connection, fromDate, toDate);
-            totalDays = getDaysWithoutHolidays(connection, fromDate, toDate);
-            allCustomersExpanses = getAllCustomersExpanses(connection, fromDate, toDate);
-            getAvgExpenses = getAvgExpenses(connection, fromDate, toDate);
-        }
-        catch (SQLException sql){
+            totalDays = getDataFromQuery(connection, fromDate, toDate, null, "days");
+            allCustomersExpanses = getDataFromQuery(connection, fromDate, toDate, null, "allExp");
+            getAvgExpenses = getDataFromQuery(connection, fromDate, toDate, null, "avgExp");
+        } catch (SQLException sql) {
             Error.setCause("Ошибка в запросе");
-            JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(),"error");
+            JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(), "error");
             throw new IllegalArgumentException();
         }
     }
@@ -81,18 +81,35 @@ public class SqlOperationsForStat {
             }
         }
         for (Map.Entry<String, List<Purchase>> list : uniqueNames.entrySet()) {
-            int total = getOneCustomerExpenses(connection, fromDate, toDate, list.getKey().split(" ")[0]);
+            int total = getDataFromQuery(connection, fromDate, toDate, list.getKey().split(" ")[0], "oneCastExp");
             customers.add(new Customer(list.getKey(), list.getValue(), total));
         }
         stat.close();
     }
 
-    private int getOneCustomerExpenses(Connection connection, Date fromDate, Date toDate, String lastName) throws SQLException {
+
+    private int getDataFromQuery(Connection connection, Date fromDate, Date toDate, String lastName, String queryItem) throws SQLException {
         int value = 0;
-        PreparedStatement stat = connection.prepareStatement(StatQueries.getOneCustomerExpensesQuery());
-        stat.setString(1, lastName);
-        stat.setDate(2, fromDate);
-        stat.setDate(3, toDate);
+        if (queryItem.equals("oneCastExp")) {
+            stat = connection.prepareStatement(StatQueries.getOneCustomerExpensesQuery());
+            stat.setString(1, lastName);
+            stat.setDate(2, fromDate);
+            stat.setDate(3, toDate);
+        } else {
+            switch (queryItem) {
+                case "days":
+                    stat = connection.prepareStatement(StatQueries.getDaysWithoutHolidaysQuery());
+                    break;
+                case "allExp":
+                    stat = connection.prepareStatement(StatQueries.getAllCustomersExpensesQuery());
+                    break;
+                case "avgExp":
+                    stat = connection.prepareStatement(StatQueries.getAvgExpensesQuery());
+                    break;
+            }
+            stat.setDate(1, fromDate);
+            stat.setDate(2, toDate);
+        }
         ResultSet result = stat.executeQuery();
         if (result.next())
             value = result.getInt(1);
@@ -100,41 +117,6 @@ public class SqlOperationsForStat {
         return value;
     }
 
-    private int getDaysWithoutHolidays(Connection connection, Date fromDate, Date toDate) throws SQLException {
-        int value = 0;
-        PreparedStatement stat = connection.prepareStatement(StatQueries.getDaysWithoutHolidaysQuery());
-        stat.setDate(1, fromDate);
-        stat.setDate(2, toDate);
-        ResultSet result = stat.executeQuery();
-        if (result.next())
-            value = result.getInt(1);
-        stat.close();
-        return value;
-    }
-
-    private int getAllCustomersExpanses(Connection connection, Date fromDate, Date toDate) throws SQLException {
-        int value = 0;
-        PreparedStatement stat = connection.prepareStatement(StatQueries.getAllCustomersExpensesQuery());
-        stat.setDate(1, fromDate);
-        stat.setDate(2, toDate);
-        ResultSet result = stat.executeQuery();
-        if (result.next())
-            value = result.getInt(1);
-        stat.close();
-        return value;
-    }
-
-    private double getAvgExpenses(Connection connection, Date fromDate, Date toDate) throws SQLException {
-        int value = 0;
-        PreparedStatement stat = connection.prepareStatement(StatQueries.getAvgExpensesQuery());
-        stat.setDate(1, fromDate);
-        stat.setDate(2, toDate);
-        ResultSet result = stat.executeQuery();
-        if (result.next())
-            value = result.getInt(1);
-        stat.close();
-        return value;
-    }
 
 }
 

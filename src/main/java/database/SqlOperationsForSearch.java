@@ -17,10 +17,11 @@ public class SqlOperationsForSearch {
     private static final List<String> minExpenses = new ArrayList<>();
     private static final List<String> badCustomers = new ArrayList<>();
     private static final ArrayList<Criteria> dataForJsonFile = new ArrayList<>();
-
     public static ArrayList<Criteria> getDataForJsonFile() {
         return dataForJsonFile;
     }
+    private static PreparedStatement stat = null;
+    private static ResultSet result;
 
     private int getNumberOfOperation(String json) {
         switch (json.split(":")[0].trim()) {
@@ -70,7 +71,6 @@ public class SqlOperationsForSearch {
     }
 
     private void getSqlDataForSearch(String firstParam, String secondParam, int numOfOperation) throws SQLException, IOException {
-        PreparedStatement stat = null;
         try (Connection connection = InitialTables.getConnection()) {
             switch (numOfOperation) {
                 case 1:
@@ -92,7 +92,7 @@ public class SqlOperationsForSearch {
                     stat.setInt(1, Integer.parseInt(firstParam));
                     break;
             }
-            ResultSet result = stat.executeQuery();
+            result = stat.executeQuery();
             while (result.next()) {
                 chooseCriteriaList(numOfOperation).add(result.getString(1) + ":" + result.getString(2));
             }

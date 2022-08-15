@@ -1,6 +1,14 @@
 {
-        "startDate": "2016-01-14",
-        "endDate": "2022-12-26"
+        "criterias": [
+                {"lastName":"Вентура"},
+                {"productName":"Морозильная камера", "minTimes": 5},
+                {"productName":"Электроплита", "minTimes": 1},
+                {"lastName":"Борн"},
+                {"minExpenses": 1000, "maxExpenses": 400000},
+                {"productName":"Телевизор", "minTimes": 1},
+                {"badCustomers": 3},
+                {"lastName":"Фет"}
+        ]
 }
 
 
