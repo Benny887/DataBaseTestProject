@@ -113,7 +113,7 @@ public class SqlOperationsForSearch {
         Criteria criteria;
         List<String> criterias = SqlOperationsForSearch.chooseCriteriaList(numOfOperation);
         for (String str : criterias) {
-            results.add(new LastName(str.split(":")[0], str.split(":")[1]));
+            results.add(new LastName(str.split(":")[1], str.split(":")[0]));
         }
         criterias.clear();
         switch (numOfOperation) {
@@ -163,3 +163,11 @@ public class SqlOperationsForSearch {
 //         "maxExpenses": 10000,
 //         "badCustomers": 3,
 //         "badCustomers": 2
+
+
+
+
+//{
+//        "startDate": "2021-01-11",
+//        "endDate": "2021-01-17"
+//        }

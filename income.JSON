@@ -1,14 +1,13 @@
 {
-  "criterias": [
-    {"lastName":"Вентура"},
-    {"lastName":"Борн"},
-    {"productName":"Электроплита", "minTimes": 1},
-    {"lastName":"Фет"},
-    {"minExpenses": 1000, "maxExpenses": 30000},
-    {"badCustomers": 3}
-  ]
-}
-
+        "criterias": [
+        {"lastName":"Вентура"},
+        {"lastName":"Борн"},
+        {"productName":"Электроплита", "minTimes": 1},
+        {"lastName":"Фет"},
+        {"minExpenses": 1000, "maxExpenses": 30000},
+        {"badCustomers": 3}
+        ]
+        }
 
 
 

@@ -28,10 +28,10 @@ public class IncomeHandler {
 
     public void handleIncomeData(String[] args) throws IOException, SQLException {
 //        try {
-            if (Paths.get(args[1]).toFile().isFile() && Paths.get(args[2]).toFile().isFile()) {
+            if (checkInnerParam(args[0],args[1],args[2])) {
                 json = customJsonParse(new File(args[1]));
                 writeDst = Paths.get(args[2]);
-                if(json.size() != 0 ) {
+                if(json.size() != 0) {
                     if (args[0].equals("search")) {
                         SqlOperationsForSearch sqlOperationsForSearch = new SqlOperationsForSearch();
                         sqlOperationsForSearch.searchOperationManager();
@@ -46,11 +46,16 @@ public class IncomeHandler {
                     JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(), "error");
                 }
             } else {
-                System.out.println("Проверьте введенные пути к файлам для чтения и записи");
+                System.out.println("Проверьте корректность входных параметров:названия файлов и тип операции");
             }
         }
 //        catch (Exception ignore){
 //            System.out.println("какая-то ошибка в IncomeHandler"); //поправить
 //        }
 //    }
+
+    private boolean checkInnerParam(String firstParam, String secondParam, String thirdParam){
+        return Paths.get(secondParam).toFile().isFile() && Paths.get(thirdParam).toFile().isFile() &&
+                (firstParam.equals("search") || firstParam.equals("stat"));
+    }
 }
