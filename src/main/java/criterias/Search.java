@@ -1,6 +1,7 @@
 package criterias;
 
 import criterias.searchDTOs.Criteria;
+
 import java.util.List;
 
 public class Search {

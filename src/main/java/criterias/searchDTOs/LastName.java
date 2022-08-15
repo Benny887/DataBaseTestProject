@@ -7,7 +7,7 @@ public class LastName {
     public LastName() {
     }
 
-    public LastName(String lastName,String firstName) {
+    public LastName(String lastName, String firstName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }

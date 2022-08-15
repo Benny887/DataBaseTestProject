@@ -2,7 +2,7 @@ package criterias.searchDTOs;
 
 import java.util.List;
 
-public class FourthCriteria implements Criteria{
+public class FourthCriteria implements Criteria {
     private BadCustomer criteria;
 
     private List<LastName> results;

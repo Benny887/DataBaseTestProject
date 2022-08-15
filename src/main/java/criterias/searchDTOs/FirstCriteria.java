@@ -2,7 +2,7 @@ package criterias.searchDTOs;
 
 import java.util.List;
 
-public class FirstCriteria implements Criteria{
+public class FirstCriteria implements Criteria {
     private Name criteria;
 
     private List<LastName> results;

@@ -14,7 +14,7 @@ public class MyParseJSON {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
             while (br.ready())
                 jsonFileAsString += br.readLine();
-            Pattern pattern = Pattern.compile("([\\p{L}\\s]+)\":[^\\[{]\\s?\"?([-\\p{L}\\s\\d]+)");
+            Pattern pattern = Pattern.compile("([\\p{L}\\s]+)\"\\s?:[^\\[{]\\s?\"?([-\\p{L}\\s\\d]+)");
             Matcher matcher = pattern.matcher(jsonFileAsString);
             while (matcher.find()) {
                 pointsOfJsons.add(matcher.start());

@@ -2,7 +2,7 @@ package criterias.searchDTOs;
 
 import java.util.List;
 
-public class SecondCriteria implements Criteria{
+public class SecondCriteria implements Criteria {
     private MinTimesPurchase criteria;
 
     private List<LastName> results;

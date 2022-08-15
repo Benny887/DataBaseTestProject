@@ -22,13 +22,18 @@ public class SqlOperationsForSearch {
         return dataForJsonFile;
     }
 
-    private static int getNumberOfOperation(String json){
-        switch (json.split(":")[0].trim()){
-            case "lastName": return 1;
-            case "productName": return 2;
-            case "minExpenses": return 3;
-            case "badCustomers": return 4;
-            default: return 0;
+    private int getNumberOfOperation(String json) {
+        switch (json.split(":")[0].trim()) {
+            case "lastName":
+                return 1;
+            case "productName":
+                return 2;
+            case "minExpenses":
+                return 3;
+            case "badCustomers":
+                return 4;
+            default:
+                return 0;
         }
     }
 
@@ -53,15 +58,15 @@ public class SqlOperationsForSearch {
                         throw new IllegalArgumentException();
                 }
             }
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             Error.setCause("Ошибка в значении критерия поиска");
-            JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(),"error");
+            JsonWriter.writeToJsonFile(IncomeHandler.getWriteDst(), "error");
             throw new IllegalArgumentException();
         }
     }
 
-    private static String getNextElemValue(int i){
-        return IncomeHandler.getJson().get(i+1);
+    private String getNextElemValue(int i) {
+        return IncomeHandler.getJson().get(i + 1);
     }
 
     private void getSqlDataForSearch(String firstParam, String secondParam, int numOfOperation) throws SQLException, IOException {
@@ -69,33 +74,21 @@ public class SqlOperationsForSearch {
         try (Connection connection = InitialTables.getConnection()) {
             switch (numOfOperation) {
                 case 1:
-                    stat = connection.prepareStatement("select * from customers \n" +
-                            "where lastName = ?");
+                    stat = connection.prepareStatement(SearchQueries.getLastnameQuery());
                     stat.setString(1, firstParam);
                     break;
                 case 2:
-                    stat = connection.prepareStatement("select c.firstName, c.lastName from customers c\n" +
-                            "inner join (select customer from purchases where purchase = ? \n" +
-                            "group by customer having count(*) >= ?) cp on c.lastName = cp.customer");
+                    stat = connection.prepareStatement(SearchQueries.getProductAndCountQuery());
                     stat.setString(1, firstParam);
                     stat.setInt(2, Integer.parseInt(secondParam));
                     break;
                 case 3:
-                    stat = connection.prepareStatement("select c.firstName, c.lastName from customers c\n" +
-                            "inner join  (select pu.customer, sum(pr.price) allPurch\n" +
-                            "from purchases pu join products pr on pu.purchase = pr.prodName\n" +
-                            "group by pu.customer having sum(pr.price) between ? and ?) dog\n" +
-                            "on c.lastName = dog.customer");
+                    stat = connection.prepareStatement(SearchQueries.getMinMaxQuery());
                     stat.setInt(1, Integer.parseInt(firstParam));
                     stat.setInt(2, Integer.parseInt(secondParam));
                     break;
                 case 4:
-                    stat = connection.prepareStatement("select c.firstName, c.lastName from customers c " +
-                            "inner join (select p.customer\n" +
-                            "from purchases p group by p.customer having count(*) = (select min(cou) " +
-                            "from (select pu.customer p , count(*) cou from purchases pu " +
-                            "group by pu.customer) cu) limit ?) " +
-                            "as kot on c.lastName = kot.customer");
+                    stat = connection.prepareStatement(SearchQueries.getBadCustomersQuery());
                     stat.setInt(1, Integer.parseInt(firstParam));
                     break;
             }
@@ -103,15 +96,15 @@ public class SqlOperationsForSearch {
             while (result.next()) {
                 chooseCriteriaList(numOfOperation).add(result.getString(1) + ":" + result.getString(2));
             }
-            makePojoForSearch(firstParam,secondParam,numOfOperation);
+            makePojoForSearch(firstParam, secondParam, numOfOperation);
             stat.close();
         }
     }
 
-    public static void makePojoForSearch(String firstJsonElem, String secondJsonElem, int numOfOperation) {
+    private void makePojoForSearch(String firstJsonElem, String secondJsonElem, int numOfOperation) {
         List<LastName> results = new ArrayList<>();
         Criteria criteria;
-        List<String> criterias = SqlOperationsForSearch.chooseCriteriaList(numOfOperation);
+        List<String> criterias = chooseCriteriaList(numOfOperation);
         for (String str : criterias) {
             results.add(new LastName(str.split(":")[1], str.split(":")[0]));
         }
@@ -141,33 +134,18 @@ public class SqlOperationsForSearch {
     }
 
 
-    public static List<String> chooseCriteriaList(int criteria){
-        switch (criteria){
-            case 1: return lastName;
-            case 2: return productName;
-            case 3: return minExpenses;
-            case 4: return badCustomers;
-            default: return null;
+    private List<String> chooseCriteriaList(int criteria) {
+        switch (criteria) {
+            case 1:
+                return lastName;
+            case 2:
+                return productName;
+            case 3:
+                return minExpenses;
+            case 4:
+                return badCustomers;
+            default:
+                return null;
         }
     }
 }
-// "lastNameCriteriaResults":"Коваль",
-//         "productName":"Морозильная камера",
-//         "minTimes": 5,
-//         "minExpenses": 1000,
-//         "maxExpenses": 100000,
-//         "productName":"Холодильник",
-//         "minTimes": 1,
-//         "lastNameCriteriaResults":"Соколов",
-//         "minExpenses": 1000,
-//         "maxExpenses": 10000,
-//         "badCustomers": 3,
-//         "badCustomers": 2
-
-
-
-
-//{
-//        "startDate": "2021-01-11",
-//        "endDate": "2021-01-17"
-//        }

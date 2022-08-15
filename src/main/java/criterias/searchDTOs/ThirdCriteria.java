@@ -2,7 +2,7 @@ package criterias.searchDTOs;
 
 import java.util.List;
 
-public class ThirdCriteria implements Criteria{
+public class ThirdCriteria implements Criteria {
     private MinMaxExpenses criteria;
 
     private List<LastName> results;
