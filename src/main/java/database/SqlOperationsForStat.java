@@ -72,7 +72,7 @@ public class SqlOperationsForStat {
             ResultSet result = stat.executeQuery();
             while (result.next()) {
                 name = result.getString(2) + " " + result.getString(1);
-                purchase = new Purchase(result.getString(3), Double.parseDouble(result.getString(4)));
+                purchase = new Purchase(result.getString(3), Integer.parseInt(result.getString(4)));
                 if (customerNames.containsKey(name))
                     customerNames.get(name).add(purchase);
                 else {

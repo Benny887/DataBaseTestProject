@@ -1,7 +1,7 @@
 {
   "criterias": [
     {"minExpenses": 4500, "maxExpenses": 16500},
-    {"lastName":"Фет"},
+    {"lastName":"Вентура"},
     {"productName":"Электроплита", "minTimes": 2},
     {"lastName":"Борн"},
     {"lastName":"Чубриков"},

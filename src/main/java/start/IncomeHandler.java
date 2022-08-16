@@ -41,15 +41,16 @@ public class IncomeHandler {
                         sqlOperationsForStat.makePojoForStat();
                         JsonWriter.writeToJsonFile(Paths.get(args[2]), "stat");
                     }
+                    System.out.println("Выполнение завершено");
                 } else {
                     Error.setCause(ErrorMessage.INCORRECT_INPUT_FILES);
                     JsonWriter.writeToJsonFile(IncomeHandler.getWriteDstFile(), "error");
                 }
             } else {
-                Error.setCause(ErrorMessage.INCORRECT_INPUT_PARAMS);
-                JsonWriter.writeToJsonFile(IncomeHandler.getWriteDstFile(), "error");
+                System.out.println(ErrorMessage.INCORRECT_INPUT_PARAMS);
             }
-        } catch (Exception ignore) {
+        } catch (Exception e) {
+            System.out.println(ErrorMessage.FATAL_ERROR);
         }
 
     }

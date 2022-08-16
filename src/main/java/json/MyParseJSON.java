@@ -5,7 +5,8 @@ import start.IncomeHandler;
 import support.ErrorMessage;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,7 +29,7 @@ public class MyParseJSON {
                 jsonData.add(jsonFileAsString.substring(pointsOfJsons.get(i), pointsOfJsons.get(i + 1))
                         .replaceAll("\"", ""));
             }
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             Error.setCause(ErrorMessage.INCORRECT_INPUT_FILES);
             JsonWriter.writeToJsonFile(IncomeHandler.getWriteDstFile(), "error");
         }

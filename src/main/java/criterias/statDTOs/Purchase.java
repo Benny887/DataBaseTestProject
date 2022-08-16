@@ -2,12 +2,12 @@ package criterias.statDTOs;
 
 public class Purchase {
     private String name;
-    private double expenses;
+    private int expenses;
 
     public Purchase() {
     }
 
-    public Purchase(String name, double expenses) {
+    public Purchase(String name, int expenses) {
         this.name = name;
         this.expenses = expenses;
     }
@@ -24,7 +24,7 @@ public class Purchase {
         return expenses;
     }
 
-    public void setExpenses(double expenses) {
+    public void setExpenses(int expenses) {
         this.expenses = expenses;
     }
 }

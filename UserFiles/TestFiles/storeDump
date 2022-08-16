@@ -1,0 +1,177 @@
+insert into customers values('Максим','Веллер');
+insert into customers values('Олег','Заостровских');
+insert into customers values('Алексей','Каленых');
+insert into customers values('Дмитрий','Макаров');
+insert into customers values('Владимир','Пашин');
+insert into customers values('Виктор','Сидоров');
+insert into customers values('Андрей','Ситов');
+insert into customers values('Юрий','Слашин');
+insert into customers values('Валерий','Леонид');
+insert into customers values('Павел','Окунев');
+insert into customers values('Александр','Чайкин');
+insert into customers values('Леонид','Степанов');
+insert into customers values('Валерий','Соколов');
+insert into customers values('Константин','Чубриков');
+insert into customers values('Евгений','Коваль');
+insert into customers values('Боба','Фет');
+insert into customers values('Джейсон','Борн');
+insert into customers values('Тони','Старк');
+insert into customers values('Боб','Марли');
+insert into customers values('Марк','Уолберг');
+insert into customers values('Фродо','Бэггинс');
+insert into customers values('Энакен','Скайуокер');
+insert into customers values('Хабиб','Нурмагомедов');
+insert into customers values('Джек','Воробей');
+insert into customers values('Бенджамин','Баттон');
+insert into customers values('Шерлок','Холмс');
+insert into customers values('Бон','Джови');
+insert into customers values('Эйс','Вентура');
+
+insert into products values('Аудиосистема','34030');
+insert into products values('Игровая приставка','55800');
+insert into products values('Колонка','3700');
+insert into products values('Компьютер','110600');
+insert into products values('Моноблок','98500');
+insert into products values('Морозильная камера','46080');
+insert into products values('Ноутбук','127020');
+insert into products values('Планшет','17030');
+insert into products values('Пылесос','21040');
+insert into products values('Робот пылесос','39050');
+insert into products values('Телевизор','78070');
+insert into products values('Телефон','28050');
+insert into products values('Тостер','4080');
+insert into products values('Утюг','9040');
+insert into products values('Холодильник','58030');
+insert into products values('Чайник','2820');
+insert into products values('Электроплита','23070');
+insert into products values('Увлажнитель воздуха','73040');
+insert into products values('Мультиварка','9030');
+insert into products values('Калькулятор','1390');
+insert into products values('Мясорубка','5560');
+insert into products values('Блендер','3950');
+insert into products values('Кофемолка','2130');
+insert into products values('Посудомоечная машина','17760');
+insert into products values('Обогреватель','5840');
+insert into products values('Швейная машинка','14590');
+insert into products values('Электробритва','2670');
+insert into products values('Массажер','6360');
+insert into products values('Весы','5240');
+insert into products values('Перфоратор','11330');
+
+insert into purchases values('Джови','Швейная машинка', '2020-03-19');
+insert into purchases values('Холмс','Швейная машинка', '2021-04-24');
+insert into purchases values('Баттон','Холодильник', '2020-09-13');
+insert into purchases values('Баттон','Перфоратор', '2021-12-14');
+insert into purchases values('Воробей','Увлажнитель воздуха', '2022-02-23');
+insert into purchases values('Воробей','Посудомоечная машина', '2021-03-16');
+insert into purchases values('Воробей','Утюг', '2022-03-03');
+insert into purchases values('Воробей','Игровая приставка', '2020-01-20');
+insert into purchases values('Воробей','Компьютер', '2021-05-09');
+insert into purchases values('Нурмагомедов','Обогреватель', '2020-03-03');
+insert into purchases values('Нурмагомедов','Кофемолка', '2020-07-08');
+insert into purchases values('Нурмагомедов','Калькулятор', '2021-01-04');
+insert into purchases values('Нурмагомедов','Электроплита', '2022-02-18');
+insert into purchases values('Нурмагомедов','Электроплита', '2022-08-07');
+insert into purchases values('Скайуокер','Мясорубка', '2022-07-08');
+insert into purchases values('Бэггинс','Обогреватель', '2020-10-03');
+insert into purchases values('Бэггинс','Посудомоечная машина', '2021-01-04');
+insert into purchases values('Бэггинс','Увлажнитель воздуха', '2022-11-05');
+insert into purchases values('Бэггинс','Пылесос', '2022-09-06');
+insert into purchases values('Бэггинс','Посудомоечная машина', '2020-08-07');
+insert into purchases values('Бэггинс','Посудомоечная машина', '2022-08-06');
+insert into purchases values('Уолберг','Робот пылесос', '2022-01-09');
+insert into purchases values('Уолберг','Швейная машинка', '2022-06-07');
+insert into purchases values('Уолберг','Перфоратор', '2021-04-15');
+insert into purchases values('Уолберг','Мультиварка', '2020-08-12');
+insert into purchases values('Уолберг','Телевизор', '2020-11-18');
+insert into purchases values('Марли','Холодильник', '2021-04-17');
+insert into purchases values('Марли','Кофемолка', '2022-04-22');
+insert into purchases values('Марли','Блендер', '2020-06-13');
+insert into purchases values('Марли','Кофемолка', '2020-05-28');
+insert into purchases values('Марли','Кофемолка', '2021-10-26');
+insert into purchases values('Старк','Блендер', '2020-03-23');
+insert into purchases values('Старк','Посудомоечная машина', '2022-08-29');
+insert into purchases values('Старк','Тостер', '2020-05-23');
+insert into purchases values('Старк','Моноблок', '2020-06-24');
+insert into purchases values('Старк','Электробритва', '2021-05-27');
+insert into purchases values('Старк','Весы', '2022-01-15');
+insert into purchases values('Старк','Массажер', '2020-02-25');
+insert into purchases values('Веллер','Весы', '2021-02-25');
+insert into purchases values('Веллер','Обогреватель', '2021-08-11');
+insert into purchases values('Веллер','Электроплита', '2021-04-11');
+insert into purchases values('Веллер','Кофемолка', '2021-06-17');
+insert into purchases values('Веллер','Калькулятор', '2021-01-16');
+insert into purchases values('Веллер','Чайник', '2021-01-11');
+insert into purchases values('Веллер','Посудомоечная машина', '2021-02-22');
+insert into purchases values('Веллер','Телефон', '2021-02-13');
+insert into purchases values('Фет','Планшет', '2021-01-11');
+insert into purchases values('Фет','Телефон', '2021-01-12');
+insert into purchases values('Фет','Утюг', '2021-01-13');
+insert into purchases values('Фет','Чайник', '2021-01-14');
+insert into purchases values('Фет','Мультиварка', '2021-01-15');
+insert into purchases values('Фет','Телевизор', '2021-01-16');
+insert into purchases values('Фет','Электроплита', '2021-01-17');
+insert into purchases values('Фет','Телевизор', '2021-01-17');
+insert into purchases values('Борн','Планшет', '2021-01-11');
+insert into purchases values('Борн','Телефон', '2021-01-12');
+insert into purchases values('Борн','Утюг', '2021-01-13');
+insert into purchases values('Борн','Чайник', '2021-01-14');
+insert into purchases values('Борн','Мультиварка', '2021-01-15');
+insert into purchases values('Борн','Телевизор', '2021-01-16');
+insert into purchases values('Борн','Электроплита', '2021-01-17');
+insert into purchases values('Борн','Электроплита', '2021-01-17');
+insert into purchases values('Сидоров','Планшет', '2021-01-11');
+insert into purchases values('Коваль','Ноутбук', '2018-10-04');
+insert into purchases values('Чубриков','Чайник', '2017-04-21');
+insert into purchases values('Чубриков','Чайник', '2020-02-16');
+insert into purchases values('Чубриков','Чайник', '2022-05-11');
+insert into purchases values('Сидоров','Планшет', '2021-01-11');
+insert into purchases values('Веллер','Планшет', '2021-09-02');
+insert into purchases values('Заостровских','Утюг', '2019-03-21');
+insert into purchases values('Макаров','Пылесос', '2018-03-27');
+insert into purchases values('Сидоров','Электроплита', '2021-01-22');
+insert into purchases values('Пашин','Телефон', '2020-03-15');
+insert into purchases values('Степанов','Утюг', '2022-01-07');
+insert into purchases values('Сидоров','Чайник', '2020-03-02');
+insert into purchases values('Степанов','Телефон', '2021-06-14');
+insert into purchases values('Макаров','Пылесос', '2021-03-04');
+insert into purchases values('Пашин','Утюг', '2021-01-16');
+insert into purchases values('Сидоров','Чайник', '2020-03-25');
+insert into purchases values('Слашин','Пылесос', '2020-01-04');
+insert into purchases values('Макаров','Мультиварка', '2022-03-06');
+insert into purchases values('Макаров','Холодильник', '2016-07-13');
+insert into purchases values('Каленых','Морозильная камера', '2019-01-01');
+insert into purchases values('Каленых','Морозильная камера', '2018-02-19');
+insert into purchases values('Каленых','Морозильная камера', '2017-03-10');
+insert into purchases values('Каленых','Морозильная камера', '2020-04-21');
+insert into purchases values('Каленых','Морозильная камера', '2021-05-14');
+insert into purchases values('Ситов','Планшет', '2022-09-02');
+insert into purchases values('Соколов','Утюг', '2019-03-21');
+insert into purchases values('Каленых','Пылесос', '2018-03-27');
+insert into purchases values('Ситов','Электроплита', '2021-01-22');
+insert into purchases values('Пашин','Морозильная камера', '2019-10-12');
+insert into purchases values('Ситов','Утюг', '2019-01-07');
+insert into purchases values('Сидоров','Морозильная камера', '2020-11-02');
+insert into purchases values('Степанов','Телефон', '2021-11-14');
+insert into purchases values('Макаров','Пылесос', '2022-10-04');
+insert into purchases values('Каленых','Утюг', '2021-09-16');
+insert into purchases values('Соколов','Чайник', '2019-08-25');
+insert into purchases values('Слашин','Пылесос', '2022-05-04');
+insert into purchases values('Соколов','Мультиварка', '2020-08-06');	
+
+
+/*create table customers(
+             firstName varchar(15) not null check (firstName <> ''),
+             lastName varchar(20) not null check (lastName <> '')  primary key);
+			 
+create table products(
+			 prodName varchar(30) unique not null check(prodName <> '') primary key,
+			 price int not null check (price >= 0));		
+			 
+create table purchases (
+			 customer varchar(20) not null check(customer <> ''),
+		 	 purchase varchar(30) not null check(purchase <> ''),
+			 acquireDate date not null,
+			 foreign key (purchase) references products(prodName),
+			 foreign key (customer) references customers(lastName))*/		 
+			 
